@@ -2,8 +2,6 @@ import 'package:car_app/utils/colors.dart';
 import 'package:car_app/view_models/main_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../utils/dimen.dart';
 import '../utils/strings.dart';
 
 class MainScreen extends StatefulWidget {
@@ -33,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
       drawer: Container(),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          if(constraints.maxWidth < 450) {
+          if(constraints.maxWidth < 600) {
             return Consumer<MainProvider> (
               builder: (context, value, child) {
                 return Column(

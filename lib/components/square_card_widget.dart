@@ -19,6 +19,7 @@ class SquareCardWidget extends StatelessWidget {
       surfaceTintColor: MyColors.xFFFFFFFF,
       elevation: Dimen.dim5,
       clipBehavior: Clip.hardEdge,
+      margin: const EdgeInsets.only(left: Dimen.dim10),
       child: Column (
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

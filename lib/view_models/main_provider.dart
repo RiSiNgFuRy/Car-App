@@ -1,9 +1,9 @@
-import 'package:car_app/views/home_screen.dart';
-import 'package:car_app/views/rental_screen.dart';
-import 'package:car_app/views/services_screen.dart';
+import 'package:car_app/views/home_page.dart';
+import 'package:car_app/views/rental_page.dart';
+import 'package:car_app/views/services_page.dart';
 import 'package:flutter/material.dart';
 
-import '../views/account_screen.dart';
+import '../views/account_page.dart';
 
 class MainProvider extends ChangeNotifier {
    int _selectedIndex = 0;
@@ -25,7 +25,7 @@ class MainProvider extends ChangeNotifier {
          _selectedPage = const ServicesScreen();
          break;
        case 3:
-         _selectedPage = const AccountScreen();
+         _selectedPage = AccountScreen();
        default:
          throw UnimplementedError("No screen decided for $index index");
      }

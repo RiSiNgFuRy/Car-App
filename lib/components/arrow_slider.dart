@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/dimen.dart';
 import '../utils/strings.dart';
-import '../view_models/home_screen_provider.dart';
+import '../view_models/home_page_provider.dart';
 
 class ArrowSlider extends StatelessWidget {
   Widget child;

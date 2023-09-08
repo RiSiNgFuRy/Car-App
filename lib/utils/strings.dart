@@ -9,6 +9,9 @@ class Strings {
   static const String viewAll = "View All";
   static const String description = "Description";
   static const String mockLongDescription = "On a standard bicycle the wheels are mounted in-line in a metal frame, with the front wheel held in a rotatable fork. The rider sits on a saddle and steers by leaning and turning handlebars that are attached to the fork.";
+  static const String selectStartDate = "Select start date";
+  static const String selectEndDate = "Select end date";
+  static const String rupeeSymbol = "\u20B9";
 
   //Paths
   static const String fallbackAssetPath = "assets/images/fallback_img.png";

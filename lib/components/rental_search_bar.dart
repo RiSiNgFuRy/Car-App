@@ -1,6 +1,6 @@
 import 'package:car_app/components/custom_grid_selector.dart';
 import 'package:car_app/utils/colors.dart';
-import 'package:car_app/view_models/rental_screen_provider.dart';
+import 'package:car_app/view_models/rental_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -176,13 +176,12 @@ class _RentalSearchBarState extends State<RentalSearchBar> {
                           return Dialog(
                             backgroundColor: Colors.transparent,
                             child: CustomCalendar(
+                              initiallySelectedDate: widget.provider.currentlySelectedDate,
                               activeDateRange: DateTimeRange(
                                   start: DateTime.now(),
                                   end: DateTime.now().add(const Duration(days: 30))
                               ),
-                              restrictToRange: true,
-                              columnSpacing: mediaQuery.size.width < 600 ? Dimen.dim15 : null,
-                              provider: widget.provider,
+                              restrictToActiveRange: true,
                               onChangeSelectedDate: (DateTime date) {
                                 widget.provider.changeSelectedDate(date);
                                 Navigator.of(context).pop();

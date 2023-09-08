@@ -5,7 +5,7 @@ import 'package:car_app/models/vehicle_info_model.dart';
 import 'package:car_app/utils/colors.dart';
 import 'package:car_app/utils/helpers/ImageHelper.dart';
 import 'package:car_app/utils/strings.dart';
-import 'package:car_app/view_models/home_screen_provider.dart';
+import 'package:car_app/view_models/home_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';

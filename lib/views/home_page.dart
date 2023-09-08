@@ -90,37 +90,33 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
 
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: Dimen.dim180),
-            child: BaseCardWidget(
-              "Top Brands",
-              padding: const EdgeInsets.symmetric(vertical: Dimen.dim10),
-              topRightmostArea: const Text(Strings.viewAll, style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: MyColors.xFFFF9200
-              ),),
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: ListView.builder(
-                    itemCount: brandsList.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: Dimen.dim100,
-                          maxWidth: Dimen.dim120,
-                          minHeight: Dimen.dim100,
-                          maxHeight: Dimen.dim120
-                        ),
-                        child: SquareCardWidget(
-                          side: mediaQuery.size.width * 0.25,
-                          imgUrl: brandsList[index].imgUrl,
-                          title: brandsList[index].title,
-                        ),
-                      );
-                    }
-                ),
+          BaseCardWidget(
+            "Top Brands",
+            padding: const EdgeInsets.symmetric(vertical: Dimen.dim10),
+            topRightmostArea: const Text(Strings.viewAll, style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: MyColors.xFFFF9200
+            ),),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: Dimen.dim120),
+              child: ListView.builder(
+                  itemCount: brandsList.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: Dimen.dim100,
+                        maxWidth: Dimen.dim120,
+                        minHeight: Dimen.dim100,
+                        maxHeight: Dimen.dim120
+                      ),
+                      child: SquareCardWidget(
+                        imgUrl: brandsList[index].imgUrl,
+                        title: brandsList[index].title,
+                      ),
+                    );
+                  }
               ),
             ),
           ),

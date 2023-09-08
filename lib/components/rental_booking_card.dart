@@ -16,12 +16,13 @@ class RentalBookingCard extends StatelessWidget {
       surfaceTintColor: MyColors.xFFFFFFFF,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(Dimen.dim40),
+          topLeft: Radius.circular(Dimen.dim35),
           topRight: Radius.circular(Dimen.dim10),
           bottomLeft: Radius.circular(Dimen.dim10),
-          bottomRight: Radius.circular(Dimen.dim40),
+          bottomRight: Radius.circular(Dimen.dim35),
         )
       ),
+      margin: const EdgeInsets.only(left: Dimen.dim10),
       clipBehavior: Clip.hardEdge,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -30,8 +31,7 @@ class RentalBookingCard extends StatelessWidget {
           Stack(
             children: [
               SizedBox(
-                width: Dimen.dim250,
-                height: Dimen.dim120,
+                height: Dimen.dim110,
                 child: ImageHelper.network(
                   "ngidf",
                 ),
@@ -58,8 +58,6 @@ class RentalBookingCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(Dimen.dim5),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
@@ -86,23 +84,20 @@ class RentalBookingCard extends StatelessWidget {
                       ),),
                     ),
 
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(Icons.location_pin, color: MyColors.xFF08BB0E),
+                    const Expanded(child: SizedBox(width: Dimen.dim10,)),
 
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: Dimen.dim10),
-                          child: Text(
-                              "Kanpur",
-                              style: TextStyle(
-                                  color: MyColors.xFF08BB0E,
-                                  fontSize: Dimen.dim18,
-                                  fontWeight: FontWeight.bold
-                              )
-                          ),
-                        ),
-                      ],
+                    const Icon(Icons.location_pin, color: MyColors.xFF08BB0E),
+
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimen.dim10),
+                      child: Text(
+                          "Kanpur",
+                          style: TextStyle(
+                              color: MyColors.xFF08BB0E,
+                              fontSize: Dimen.dim18,
+                              fontWeight: FontWeight.bold
+                          )
+                      ),
                     )
                   ],
                 )
@@ -117,7 +112,7 @@ class RentalBookingCard extends StatelessWidget {
   _getTagColor(Tags tagType) {
     switch(tagType) {
       case Tags.PICK_UP:
-        return MyColors.xFFF7FF00;
+        return MyColors.xFFBDBA00;
         break;
       case Tags.ARRIVE:
         return MyColors.xFF08BB0E;

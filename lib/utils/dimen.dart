@@ -26,6 +26,7 @@ class Dimen {
   static const double dim60 = 60;
   static const double dim70 = 70;
   static const double dim80 = 80;
+  static const double dim85 = 85;
   static const double dim90 = 90;
   static const double dim100 = 100;
   static const double dim105 = 105;

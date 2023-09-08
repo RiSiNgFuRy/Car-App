@@ -1,5 +1,4 @@
 import 'package:car_app/utils/colors.dart';
-import 'package:car_app/view_models/rental_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../utils/dimen.dart';
@@ -7,18 +6,22 @@ import '../utils/dimen.dart';
 class CustomCalendar extends StatefulWidget {
   final DateTimeRange? activeDateRange;
   final Function(DateTime date) onChangeSelectedDate;
-  final bool restrictToRange;
+  final Function(DateTime? startDate, DateTime? endDate)? onChangeSelectedDateRange;
+  final bool restrictToActiveRange;
+  final bool isDateRangeSelector;
   final double? columnSpacing;
-  final RentalScreenProvider provider;
+  DateTime? initiallySelectedDate;
 
-  const CustomCalendar({
+  CustomCalendar({
     super.key,
     this.activeDateRange,
     required this.onChangeSelectedDate,
-    required this.provider,
-    this.restrictToRange = false,
-    this.columnSpacing
-  }): assert(activeDateRange == null && restrictToRange == false || activeDateRange != null);
+    this.onChangeSelectedDateRange,
+    this.restrictToActiveRange = false,
+    this.isDateRangeSelector = false,
+    this.initiallySelectedDate,
+    this.columnSpacing,
+  }) : assert(activeDateRange == null && restrictToActiveRange == false || activeDateRange != null, "To restrict active date range need to set it activeDateRange firstly");
 
   @override
   State<CustomCalendar> createState() => _CustomCalendarState();
@@ -27,11 +30,15 @@ class CustomCalendar extends StatefulWidget {
 class _CustomCalendarState extends State<CustomCalendar> {
 
   late DateTime startDate;
+  DateTime? selectedRangeStartDate;
+  DateTime? selectedRangeEndDate;
 
   @override
   void initState() {
     super.initState();
-    startDate = widget.activeDateRange?.start ?? DateTime.now();
+    startDate = widget.initiallySelectedDate != null
+    ? DateTime(widget.initiallySelectedDate!.year, widget.initiallySelectedDate!.month)
+    : widget.activeDateRange?.start ?? DateTime.now();
   }
 
   @override
@@ -60,7 +67,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
             Visibility(
-              visible: !widget.restrictToRange || widget.restrictToRange && widget.activeDateRange?.start != null && startDate.month > widget.activeDateRange!.start.month,
+              visible: !widget.restrictToActiveRange || widget.restrictToActiveRange && widget.activeDateRange?.start != null && startDate.month > widget.activeDateRange!.start.month,
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
@@ -85,7 +92,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
           ),
 
             Visibility(
-              visible: !widget.restrictToRange || widget.activeDateRange?.start != null && startDate.month < widget.activeDateRange!.end.month,
+              visible: !widget.restrictToActiveRange || widget.activeDateRange?.start != null && startDate.month < widget.activeDateRange!.end.month,
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
@@ -108,7 +115,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   _calendar(BuildContext context) {
     var weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    var selectedDate = widget.provider.currentlySelectedDate;
+    var selectedDate = widget.initiallySelectedDate;
 
     return FittedBox(
       child: DataTable(
@@ -122,9 +129,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
           for(var weekDay in weekDays)
             DataColumn(
                 label: Container(
-                    width: Dimen.dim40,
+                    width: Dimen.dim70,
                     alignment: Alignment.center,
-                    child: Text(weekDay)
+                    child: Text(weekDay, style: const TextStyle(
+                      fontSize: Dimen.dim20
+                    ),)
                 )
             )
         ],
@@ -140,13 +149,14 @@ class _CustomCalendarState extends State<CustomCalendar> {
             while (weekCells.length < 7 && date.month == startDate.month) {
               var capturedDate = date;
               weekCells.add(DataCell(
-                  _areSameDates(selectedDate, date) ?
-                  Container(
-                    width: Dimen.dim40,
-                    height: Dimen.dim40,
+                  selectedDate != null && _areSameDates(selectedDate, date)
+                  || selectedRangeStartDate != null && _areSameDates(selectedRangeStartDate!, date)
+                  || selectedRangeEndDate != null && _areSameDates(selectedRangeEndDate!, date)
+                ? Container(
+                    margin: const EdgeInsets.symmetric(vertical: Dimen.dim2),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: MyColors.xFFFF9200,
+                      color: MyColors.xFF08BB0E,
                       borderRadius: BorderRadius.circular(Dimen.dim5),
                     ),
                     child: Text(
@@ -154,29 +164,51 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       style: const TextStyle(
                         color: MyColors.xFFFFFFFF,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ) :
-                  InkWell(
-                    onTap: _dateInRange(date) ? () {
-                      setState(() {
-                        selectedDate = capturedDate;
-                      });
-                      widget.onChangeSelectedDate(capturedDate);
-                    } : null,
-                    child: Container(
-                      constraints: const BoxConstraints.expand(),
-                      alignment: Alignment.center,
-                      child: Text(
-                        date.day.toString(),
-                        style: TextStyle(
-                          color: _dateInRange(date) ?
-                          date.weekday == DateTime.sunday || date.weekday == DateTime.saturday ? MyColors.xFFFF0000 : null :
-                          MyColors.xFF6B6A6A,
-                        ),
+                        fontSize: Dimen.dim20
                       ),
                     ),
                   )
+
+                  : Container(
+                    margin: const EdgeInsets.symmetric(vertical: Dimen.dim10),
+                    color: selectedRangeEndDate != null && date.isAfter(selectedRangeStartDate!) && date.isBefore(selectedRangeEndDate!)
+                        ? MyColors.xFF08BB0E.withOpacity(0.2)
+                        : null,
+                    alignment: Alignment.center,
+                    child: Text(
+                      date.day.toString(),
+                      style: TextStyle(
+                        fontSize: Dimen.dim18,
+                        color: _dateInRange(date)
+                            ? date.weekday == DateTime.sunday || date.weekday == DateTime.saturday ? MyColors.xFFFF0000 : null
+                            : MyColors.xFF6B6A6A,
+                      ),
+                    ),
+                  ),
+
+                onTap: _dateInRange(date) || widget.isDateRangeSelector ? () {
+                  setState(() {
+                    if(widget.isDateRangeSelector) {
+                      if(!_dateInRange(capturedDate)){
+                        selectedRangeStartDate = null;
+                        selectedRangeEndDate = null;
+                      } else if (selectedRangeStartDate == null) {
+                        selectedRangeStartDate = capturedDate;
+                      } else if (capturedDate.compareTo(selectedRangeStartDate!) < 0) {
+                        selectedRangeEndDate = null;
+                        selectedRangeStartDate = null;
+                      } else {
+                        selectedRangeEndDate = capturedDate;
+                      }
+                    } else {
+                      widget.initiallySelectedDate = capturedDate;
+                    }
+                  });
+                  if(widget.isDateRangeSelector && widget.onChangeSelectedDateRange != null) {
+                    widget.onChangeSelectedDateRange!(selectedRangeStartDate, selectedRangeEndDate);
+                  }
+                  widget.onChangeSelectedDate(capturedDate);
+                } : null,
               ));
               date = date.add(const Duration(days: 1));
             }
@@ -203,6 +235,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   _areSameDates(DateTime date1, DateTime date2) {
-    return DateFormat("ddMMYYYY").format(date1) == DateFormat("ddMMYYYY").format(date2);
+    return DateFormat("ddMMyyyy").format(date1) == DateFormat("ddMMyyyy").format(date2);
   }
 }

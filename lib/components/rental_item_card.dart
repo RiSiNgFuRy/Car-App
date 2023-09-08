@@ -1,13 +1,7 @@
-import 'dart:math';
-
 import 'package:car_app/components/carousel_slider.dart';
 import 'package:car_app/models/carousel_list_model.dart';
 import 'package:car_app/utils/colors.dart';
-import 'package:car_app/view_models/rental_screen_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import '../models/features_info_model.dart';
 import '../models/rental_vehicle_info_model.dart';
 import '../utils/dimen.dart';
@@ -30,18 +24,22 @@ class RentalItemCard extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: mediaQuery.size.width < 600 ?
       Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: contentArea(context)
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: contentArea(context, mediaQuery)
       ) :
-      Row(
-        children: contentArea(context),
-      ),
+      FittedBox(
+        child: SizedBox(
+          height: Dimen.dim140,
+          child: Row(
+            children: contentArea(context, mediaQuery),
+          ),
+        ),
+      )
     );
   }
 
-  contentArea(context) {
-    final mediaQuery = MediaQuery.of(context);
+  contentArea(context, MediaQueryData mediaQuery) {
 
     List<CarouselListModel> imgList = [];
     for(String url in rentalVehicleInfo.imgUrl!) {
@@ -56,79 +54,87 @@ class RentalItemCard extends StatelessWidget {
 
       const SizedBox(height: Dimen.dim10),
 
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(Dimen.dim10),
-          child: Column(
-            mainAxisSize: mediaQuery.size.width < 600 ? MainAxisSize.min : MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                rentalVehicleInfo.title!,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: Dimen.dim18,
-                ),
+      Container(
+        width: mediaQuery.size.width > 600 ? Dimen.dim350 : null,
+        padding: const EdgeInsets.all(Dimen.dim10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              rentalVehicleInfo.title!,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: Dimen.dim18,
               ),
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
 
-              Text(
-                getFeatures(rentalVehicleInfo.features)!,
-                style: const TextStyle(
-                  color: MyColors.xFFFF9200,
-                ),
+            Text(
+              getFeatures(rentalVehicleInfo.features)!,
+              style: const TextStyle(
+                color: MyColors.xFFFF9200,
               ),
+            ),
 
-              const SizedBox(height: Dimen.dim5),
+            const SizedBox(height: Dimen.dim5,),
 
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Available by ${rentalVehicleInfo.availableFrom!}",
-                      style: const TextStyle(
-                        fontSize: Dimen.dim10,
-                      ),
-                    ),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "\u20B9 ${rentalVehicleInfo.hourlyRate!}/hr",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: Dimen.dim18
-                            ),
-                          ),
-                        ),
-
-                        const Icon(Icons.location_pin, color: MyColors.xFF08BB0E),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Dimen.dim10),
-                          child: Text(
-                              rentalVehicleInfo.city!,
-                              style: const TextStyle(
-                                  color: MyColors.xFF08BB0E,
-                                  fontSize: Dimen.dim18,
-                                  fontWeight: FontWeight.bold
-                              )
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ]
-          ),
+            mediaQuery.size.width > 600 ?
+            Expanded(
+              child: _availablityInfo(context, mediaQuery)
+            ) : _availablityInfo(context, mediaQuery),
+          ]
         ),
       )
     ];
   }
+
+  _availablityInfo(context, MediaQueryData mediaQuery) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          "Available by ${rentalVehicleInfo.availableFrom!}",
+          style: const TextStyle(
+            fontSize: Dimen.dim10,
+          ),
+        ),
+
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                  "\u20B9 ${rentalVehicleInfo.hourlyRate!}/hr",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: Dimen.dim18
+                  )
+              ),
+            ),
+
+            const Icon(Icons.location_pin, color: MyColors.xFF08BB0E),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Dimen.dim10),
+              child: Text(
+                  rentalVehicleInfo.city!,
+                  style: const TextStyle(
+                      color: MyColors.xFF08BB0E,
+                      fontSize: Dimen.dim18,
+                      fontWeight: FontWeight.bold
+                  )
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
 
   String? getFeatures(Features? features) {
     String requiredString = "";

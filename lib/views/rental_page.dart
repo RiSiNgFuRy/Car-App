@@ -3,7 +3,8 @@ import 'package:car_app/components/custom_calendar.dart';
 import 'package:car_app/components/rental_item_card.dart';
 import 'package:car_app/components/rental_search_bar.dart';
 import 'package:car_app/utils/colors.dart';
-import 'package:car_app/view_models/rental_screen_provider.dart';
+import 'package:car_app/utils/routes/route_name.dart';
+import 'package:car_app/view_models/rental_page_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -154,7 +155,7 @@ class _RentalScreenState extends State<RentalScreen> {
                       focusNode: priceRangeFocusNode,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: "Price Range",
+                        label: Text("Price Range")
                       ),
                       items: const [
                         DropdownMenuItem(
@@ -185,11 +186,11 @@ class _RentalScreenState extends State<RentalScreen> {
                       padding: const EdgeInsets.symmetric(vertical: Dimen.dim1),
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return ConstrainedBox(
-                            constraints: BoxConstraints(
-                                maxHeight: mediaQuery.size.width > 600 ? Dimen.dim170 : Dimen.dim380
-                            ),
-                            child: RentalItemCard(rentalVehicleInfo: rentalVehicleInfo[index])
+                        return InkWell(
+                          onTap: () {
+                             Navigator.pushNamed(context, RoutesName.vehicleRenting, arguments: { "model": rentalVehicleInfo[index] });
+                          },
+                          child: RentalItemCard(rentalVehicleInfo: rentalVehicleInfo[index])
                         );
                       }
                   );
