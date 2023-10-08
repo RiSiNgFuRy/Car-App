@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RentingScreenProvider extends ChangeNotifier {
   LatLng? _selectedDealerLocation;
@@ -9,8 +9,8 @@ class RentingScreenProvider extends ChangeNotifier {
   int _selectedDealerIndex = 0;
   int get selectedDealerIndex => _selectedDealerIndex;
 
-  final MapController _selectedDealerMapController = MapController();
-  MapController get selectedDealerMapController => _selectedDealerMapController;
+  final Completer<GoogleMapController> _selectedDealerMapController = Completer<GoogleMapController>();
+  Completer<GoogleMapController> get selectedDealerMapController => _selectedDealerMapController;
 
   int _selectedCategoryOfServiceIdx = 0;
   int get selectedCategoryOfServiceIdx => _selectedCategoryOfServiceIdx;
@@ -18,11 +18,16 @@ class RentingScreenProvider extends ChangeNotifier {
   String? _selectedInsurancePackage;
   String? get selectedInsurancePackage => _selectedInsurancePackage;
 
-  changeSelectedDealer(LatLng? dealerLatLng, int index) {
+  changeSelectedDealer(LatLng? dealerLatLng, int index) async {
     if(dealerLatLng != null && dealerLatLng != _selectedDealerLocation) {
       _selectedDealerLocation = dealerLatLng;
       _selectedDealerIndex = index;
-      _selectedDealerMapController.move(_selectedDealerLocation!, selectedDealerMapController.zoom);
+      final GoogleMapController mapController = await _selectedDealerMapController.future;
+      await mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: dealerLatLng
+        )
+      ));
       notifyListeners();
     }
   }

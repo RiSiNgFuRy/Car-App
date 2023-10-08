@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:car_app/components/base_rental_card_widget.dart';
 import 'package:car_app/components/custom_time_slider.dart';
 import 'package:car_app/models/insurance_model.dart';
@@ -7,20 +8,35 @@ import 'package:car_app/utils/colors.dart';
 import 'package:car_app/utils/strings.dart';
 import 'package:car_app/view_models/renting_screen_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../components/custom_calendar.dart';
 import '../components/rental_insurance_card.dart';
 import '../components/renting_screen_header.dart';
 import '../utils/dimen.dart';
 
-class VehicleRentingScreen extends StatelessWidget {
+class VehicleRentingScreen extends StatefulWidget {
   RentalVehicleInfo rentalVehicleInfo;
 
   VehicleRentingScreen({super.key, required this.rentalVehicleInfo});
 
+  @override
+  State<VehicleRentingScreen> createState() => _VehicleRentingScreenState();
+}
+
+class _VehicleRentingScreenState extends State<VehicleRentingScreen> {
   late RentingScreenProvider provider;
+
+  StreamController<LatLng> streamController = StreamController();
+
+  late LatLng currentPositionCoordinates = LatLng(0.0, 0.0);
+
+  @override
+  void initState() {
+    _getCurrentLocation();
+    super.initState();
+  }
 
   var insuranceList = [
     InsuranceModel(
@@ -100,46 +116,19 @@ class VehicleRentingScreen extends StatelessWidget {
       children: [
         SizedBox(
           height: mediaQuery.size.height * 0.6,
-          child: Consumer<RentingScreenProvider>(
-            builder: (context, value, child) {
-              return FlutterMap(
-                options: MapOptions(
-                  center: value.selectedDealerLocation,
-                  onMapReady: () {
-                    provider.changeSelectedDealer(
-                        LatLng(double.parse(locationList[0].latitude!) , double.parse(locationList[0].longitude!)),
-                        0
-                    );
-                  }
-                ),
-                mapController: value.selectedDealerMapController,
-                children: [
-                  TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.example.car_app',
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      if(value.selectedDealerLocation != null)
-                      Marker(
-                          point: value.selectedDealerLocation!,
-                          builder: (BuildContext context) {
-                            return const Icon(
-                              Icons.location_pin,
-                              color: MyColors.xFFFF0000,
-                              size: Dimen.dim40,
-                            );
-                          }
-                      )
-                    ],
-                  )
-                ],
-              );
+          child: GoogleMap(
+            mapType: MapType.normal,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(37.785834, -122.406417),
+              zoom: 14.7676
+            ),
+            onMapCreated: (GoogleMapController controller) {
+
             },
           ),
         ),
 
-        RentingScreenHeader(rentalVehicleInfo: rentalVehicleInfo),
+        RentingScreenHeader(rentalVehicleInfo: widget.rentalVehicleInfo),
 
         Padding(
           padding: EdgeInsets.only(
@@ -193,7 +182,6 @@ class VehicleRentingScreen extends StatelessWidget {
                   children: [
                     _buildOption("Self Pick-up", 0, value),
                     _buildOption("Delivery", 1, value),
-                    _buildOption("Airport", 2, value),
                   ],
                 );
               },
@@ -247,7 +235,7 @@ class VehicleRentingScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(Dimen.dim30),
         ),
         child: Container(
-          width: Dimen.dim120,
+          width: Dimen.dim110,
           alignment: Alignment.center,
           child: Text(
             text,
@@ -274,7 +262,7 @@ class VehicleRentingScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${Strings.rupeeSymbol}${rentalVehicleInfo.hourlyRate!}/-", style: const TextStyle(
+          Text("${Strings.rupeeSymbol}${widget.rentalVehicleInfo.hourlyRate!}/-", style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: Dimen.dim24,
             color: MyColors.xFFFFFFFF
@@ -305,54 +293,30 @@ class VehicleRentingScreen extends StatelessWidget {
 
     return Container (
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Dimen.dim5),
-          border: Border.all(
-              color: MyColors.xFFFF9200,
-              width: Dimen.dim2
-          )
+          borderRadius: BorderRadius.circular(Dimen.dim80),
+          color: MyColors.xFF6B6A6A.withOpacity(0.2)
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(Dimen.dim5),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-                  value: "${locationList[provider.selectedDealerIndex].placeName}, ${locationList[provider.selectedDealerIndex!].completeAddress}",
-                  menuMaxHeight: Dimen.dim150,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Dealers List",
-                  ),
-                  items: [
-                    for(var idx =0; idx < locationList.length; idx++)
-                    DropdownMenuItem(
-                      value: "${locationList[idx].placeName}, ${locationList[idx].completeAddress}",
-                      child: Text(
-                        "${locationList[idx].placeName}, ${locationList[idx].completeAddress}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        maxLines: 2,
-                      ),
-                      onTap: () {
-                        provider.changeSelectedDealer(
-                          LatLng(
-                            double.parse(locationList[idx].latitude!),
-                            double.parse(locationList[idx].longitude!)
-                          ),
-                          idx
-                        );
-                      },
-                    ),
-                  ],
-                onChanged: (String? value) {  },
-              ),
-            ),
+      padding: const EdgeInsets.only(left: Dimen.dim20),
+      child: TextFormField(
+        style: const TextStyle(
+            fontSize: Dimen.dim14
+        ),
+        keyboardType: TextInputType.text,
+        textInputAction: TextInputAction.search,
+        maxLines: 1,
+        onTapOutside: (_) {
+        },
+        onFieldSubmitted: (_) {
+        },
+        decoration: const InputDecoration(
+          suffixIcon: Icon(Icons.my_location),
+          hintMaxLines: 1,
+          hintText: "Set your Location",
+          hintStyle: TextStyle(
+              fontSize: Dimen.dim14
           ),
-        ],
+          border: InputBorder.none,
+        ),
       ),
     );
   }
@@ -454,6 +418,25 @@ class VehicleRentingScreen extends StatelessWidget {
         );
       }
     );
+  }
+
+  _getCurrentLocation() async{
+    LocationPermission permission =  await Geolocator.checkPermission();
+    if(permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if(permission == LocationPermission.denied) {
+        return Future.error("Permission Denied");
+      }
+    }
+    if(permission == LocationPermission.deniedForever) {
+      return Future.error("Permission denied for forever");
+    }
+    Position currentPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high
+    );
+    print(currentPosition.longitude);
+    currentPositionCoordinates = LatLng(currentPosition.latitude, currentPosition.longitude);
+    streamController.add(currentPositionCoordinates);
   }
 }
 

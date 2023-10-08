@@ -53,10 +53,10 @@ class HomeScreen extends StatelessWidget {
     ),
     VehicleInfoModel(
         id: "2",
-        name: "Lamborghini Huracan",
-        brandName: "Lamborghini Pvt. Ltd.",
+        name: "Kawasaki 300",
+        brandName: "Kawasaki Pvt. Ltd.",
         description: Strings.mockLongDescription,
-        imageUrl: Strings.carAssetPath,
+        imageUrl: Strings.bike2AssetPath,
         costPriceDetails: CostPriceDetails(
             currency: "Rs.",
             startingPrice: 42200000,

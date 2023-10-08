@@ -10,6 +10,7 @@ class CustomCalendar extends StatefulWidget {
   final bool restrictToActiveRange;
   final bool isDateRangeSelector;
   final double? columnSpacing;
+  final double? rowHeight;
   DateTime? initiallySelectedDate;
 
   CustomCalendar({
@@ -21,6 +22,7 @@ class CustomCalendar extends StatefulWidget {
     this.isDateRangeSelector = false,
     this.initiallySelectedDate,
     this.columnSpacing,
+    this.rowHeight,
   }) : assert(activeDateRange == null && restrictToActiveRange == false || activeDateRange != null, "To restrict active date range need to set it activeDateRange firstly");
 
   @override
@@ -123,6 +125,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
           fontWeight: FontWeight.bold,
           color: MyColors.xFF000000,
         ),
+        dataRowHeight: widget.rowHeight,
         columnSpacing: widget.columnSpacing,
         dividerThickness: Dimen.dim0,
         columns: [

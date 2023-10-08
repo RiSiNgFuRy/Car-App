@@ -182,6 +182,8 @@ class _RentalSearchBarState extends State<RentalSearchBar> {
                                   end: DateTime.now().add(const Duration(days: 30))
                               ),
                               restrictToActiveRange: true,
+                              rowHeight: Dimen.dim70,
+                              columnSpacing: Dimen.dim15,
                               onChangeSelectedDate: (DateTime date) {
                                 widget.provider.changeSelectedDate(date);
                                 Navigator.of(context).pop();

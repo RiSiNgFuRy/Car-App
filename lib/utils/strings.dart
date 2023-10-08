@@ -26,7 +26,7 @@ class Strings {
   static const String topSpeedAssetPath = "assets/images/top_speed_icon.png";
   static const String itemCardBgAssetPath = "assets/images/item_card_bg.png";
   static const String carAssetPath = "assets/images/car.png";
-  static const String car1AssetPath = "assets/images/car1.png";
+  static const String bike2AssetPath = "assets/images/bike2.png";
   static const String leftArrowAssetPath = "assets/images/left_arrow.png";
   static const String rightArrowAssetPath = "assets/images/right_arrow.png";
 }

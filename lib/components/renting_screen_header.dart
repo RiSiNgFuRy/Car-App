@@ -28,54 +28,53 @@ class RentingScreenHeader extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(Dimen.dim10),
         child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: Dimen.dim80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimen.dim10)
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: CarouselSliderView(
-                    data: imgList,
-                    autoPlay: false
-                ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: Dimen.dim80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(Dimen.dim10)
               ),
+              clipBehavior: Clip.hardEdge,
+              child: CarouselSliderView(
+                  data: imgList,
+                  autoPlay: false
+              ),
+            ),
 
-              const SizedBox(height: Dimen.dim10),
-
-              Padding(
-                padding: const EdgeInsets.all(Dimen.dim10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        rentalVehicleInfo.title!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        softWrap: true,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Dimen.dim10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      rentalVehicleInfo.title!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
+                      softWrap: true,
+                    ),
 
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.location_pin,size: Dimen.dim18, color: MyColors.xFF08BB0E),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.location_pin,size: Dimen.dim18, color: MyColors.xFF08BB0E),
 
-                          Text(
-                              rentalVehicleInfo.city!,
-                              style: const TextStyle(
-                                  color: MyColors.xFF08BB0E,
-                                  fontWeight: FontWeight.bold
-                              )
-                          ),
-                        ],
-                      )
-                    ]
-                ),
+                        Text(
+                            rentalVehicleInfo.city!,
+                            style: const TextStyle(
+                                color: MyColors.xFF08BB0E,
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
+                      ],
+                    )
+                  ]
               ),
-            ]
+            ),
+          ]
         ),
       ),
     );
